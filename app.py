@@ -5,14 +5,14 @@ import numpy as np
 
 app = Flask(__name__)
 
-# Load pre-trained models from the root directory
-clf = joblib.load('D:/Folder_Kuliah/Project_2_PM/Project_2_PM/clf_model.pkl')  # RandomForestClassifier for category
-reg = joblib.load('D:/Folder_Kuliah/Project_2_PM/Project_2_PM/reg_model.pkl')  # LinearRegression for temperature
+# Load pre-trained models from the root directory (use forward slashes)
+clf = joblib.load('D:/Folder_Kuliah/Semester 6/MachineLearning/Proyek/Project_2_PM/models/clf_model.pkl')  # RandomForestClassifier for category
+reg = joblib.load('D:/Folder_Kuliah/Semester 6/MachineLearning/Proyek/Project_2_PM/models/reg_model.pkl')  # LinearRegression for temperature
 
-# Define features in the same order as during training
+# Define features in the same order as during training (matching Jupyter Notebook)
 features = ['air_pressure', 'avg_wind_direction', 'avg_wind_speed', 
             'max_wind_direction', 'max_wind_speed', 'min_wind_direction', 
-            'min_wind_speed', 'relative_humidity', 'hour', 'day', 'month', 
+            'min_wind_speed', 'relative_humidity', 'Hour', 'Day', 'Month', 
             'Prev_Air_Temp', 'Temp_3min_avg']
 
 @app.route("/", methods=["GET", "POST"])
@@ -31,9 +31,9 @@ def home():
                 'min_wind_direction': float(request.form['min_wind_direction']),
                 'min_wind_speed': float(request.form['min_wind_speed']),
                 'relative_humidity': float(request.form['relative_humidity']),
-                'hour': int(request.form['hour']),
-                'day': int(request.form['day']),
-                'month': int(request.form['month']),
+                'Hour': int(request.form['hour']),
+                'Day': int(request.form['day']),
+                'Month': int(request.form['month']),
                 'Prev_Air_Temp': float(request.form['Prev_Air_Temp']),
                 'Temp_3min_avg': float(request.form['Temp_3min_avg'])
             }
@@ -55,11 +55,11 @@ def home():
                 raise ValueError("Min Wind Speed must be between 0 and 10 mph")
             if not (0 <= input_data['relative_humidity'] <= 100):  # Dataset range: 33.2–65.8%
                 raise ValueError("Relative Humidity must be between 0 and 100%")
-            if not (0 <= input_data['hour'] <= 23):
+            if not (0 <= input_data['Hour'] <= 23):
                 raise ValueError("Hour must be between 0 and 23")
-            if not (1 <= input_data['month'] <= 12):
+            if not (1 <= input_data['Month'] <= 12):
                 raise ValueError("Month must be between 1 and 12")
-            if not (1 <= input_data['day'] <= 31):
+            if not (1 <= input_data['Day'] <= 31):
                 raise ValueError("Day must be between 1 and 31")
             if not (50 <= input_data['Prev_Air_Temp'] <= 90):  # Dataset range: 62.24–65.48°F
                 raise ValueError("Previous Air Temp must be between 50 and 90°F")
@@ -73,14 +73,21 @@ def home():
             input_df = input_df.fillna(method='ffill')
 
             # Predict temperature (regression) and category (classification)
-            temp_pred = round(reg.predict(input_df)[0], 2)
+            temp_pred_raw = reg.predict(input_df)[0]
+            print("Raw regression prediction:", temp_pred_raw, "Type:", type(temp_pred_raw))
+            
+            # Ensure the prediction is a float before rounding
+            temp_pred = round(float(temp_pred_raw), 2)
+
             category_pred = clf.predict(input_df)[0]
+            print("Raw classification prediction:", category_pred, "Type:", type(category_pred))
 
             prediction = temp_pred
             category = category_pred
         except Exception as e:
             prediction = f"Error: {str(e)}"
             category = None
+            print("Prediction error:", str(e))
 
     return render_template("index.html", prediction=prediction, category=category)
 
