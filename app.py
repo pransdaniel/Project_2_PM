@@ -6,8 +6,8 @@ import numpy as np
 app = Flask(__name__)
 
 # Load pre-trained models from the root directory
-clf = joblib.load('D:/Folder_Kuliah/Semester 6/MachineLearning/Proyek/Project_2_PM/models/clf_model.pkl')  # RandomForestClassifier for category
-reg = joblib.load('D:\Folder_Kuliah\Semester 6\MachineLearning\Proyek\Project_2_PM\models\reg_model.pkl')  # LinearRegression for temperature
+clf = joblib.load(r'D:\Praktikum PM\Project_2_PM\models\clf_model.pkl')  # RandomForestClassifier for category
+reg = joblib.load(r'D:\Praktikum PM\Project_2_PM\models\reg_model.pkl')  # LinearRegression for temperature
 
 # Define features in the same order as during training
 features = ['air_pressure', 'avg_wind_direction', 'avg_wind_speed', 
