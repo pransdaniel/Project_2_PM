@@ -6,8 +6,8 @@ import numpy as np
 app = Flask(__name__)
 
 # Load pre-trained models from the root directory
-clf = joblib.load('D:/Folder_Kuliah/Semester 6/MachineLearning/Proyek/Project_2_PM/models/clf_model.pkl')  # RandomForestClassifier for category
-reg = joblib.load('D:\Folder_Kuliah\Semester 6\MachineLearning\Proyek\Project_2_PM\models\reg_model.pkl')  # LinearRegression for temperature
+clf = joblib.load('D:/Folder_Kuliah/Project_2_PM/Project_2_PM/clf_model.pkl')  # RandomForestClassifier for category
+reg = joblib.load('D:/Folder_Kuliah/Project_2_PM/Project_2_PM/reg_model.pkl')  # LinearRegression for temperature
 
 # Define features in the same order as during training
 features = ['air_pressure', 'avg_wind_direction', 'avg_wind_speed', 
@@ -38,13 +38,33 @@ def home():
                 'Temp_3min_avg': float(request.form['Temp_3min_avg'])
             }
 
-            # Basic input validation
+            # Enhanced input validation based on dataset ranges
+            if not (900 <= input_data['air_pressure'] <= 920):  # Dataset range: 912.2–912.3 hPa
+                raise ValueError("Air Pressure must be between 900 and 920 hPa")
+            if not (0 <= input_data['avg_wind_direction'] <= 360):
+                raise ValueError("Avg Wind Direction must be between 0 and 360 degrees")
+            if not (0 <= input_data['avg_wind_speed'] <= 10):  # Dataset max: 3.0 mph
+                raise ValueError("Avg Wind Speed must be between 0 and 10 mph")
+            if not (0 <= input_data['max_wind_direction'] <= 360):
+                raise ValueError("Max Wind Direction must be between 0 and 360 degrees")
+            if not (0 <= input_data['max_wind_speed'] <= 10):  # Dataset max: 3.0 mph
+                raise ValueError("Max Wind Speed must be between 0 and 10 mph")
+            if not (0 <= input_data['min_wind_direction'] <= 360):
+                raise ValueError("Min Wind Direction must be between 0 and 360 degrees")
+            if not (0 <= input_data['min_wind_speed'] <= 10):  # Dataset max: 3.0 mph
+                raise ValueError("Min Wind Speed must be between 0 and 10 mph")
+            if not (0 <= input_data['relative_humidity'] <= 100):  # Dataset range: 33.2–65.8%
+                raise ValueError("Relative Humidity must be between 0 and 100%")
             if not (0 <= input_data['hour'] <= 23):
                 raise ValueError("Hour must be between 0 and 23")
             if not (1 <= input_data['month'] <= 12):
                 raise ValueError("Month must be between 1 and 12")
             if not (1 <= input_data['day'] <= 31):
                 raise ValueError("Day must be between 1 and 31")
+            if not (50 <= input_data['Prev_Air_Temp'] <= 90):  # Dataset range: 62.24–65.48°F
+                raise ValueError("Previous Air Temp must be between 50 and 90°F")
+            if not (50 <= input_data['Temp_3min_avg'] <= 90):  # Similar range as Prev_Air_Temp
+                raise ValueError("3-Min Avg Temp must be between 50 and 90°F")
 
             # Create DataFrame for prediction (mimics Jupyter preprocessing)
             input_df = pd.DataFrame([input_data], columns=features)

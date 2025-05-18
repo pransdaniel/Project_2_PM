@@ -54,6 +54,7 @@
             font-weight: 600;
             display: block;
             margin-bottom: 6px;
+            font-size: 14px;
         }
 
         input[type="text"] {
@@ -102,48 +103,56 @@
     <h1>🌤️ Weather Prediction App</h1>
     <form method="POST" action="/">
         <div class="form-group">
-            <label>Air Pressure</label>
-            <input type="text" name="air_pressure" required>
+            <label>Air Pressure (hPa)</label>
+            <input type="text" name="air_pressure" placeholder="e.g., 912.3" required>
         </div>
         <div class="form-group">
-            <label>Avg Wind Direction</label>
-            <input type="text" name="avg_wind_direction" required>
+            <label>Avg Wind Direction (°)</label>
+            <input type="text" name="avg_wind_direction" placeholder="e.g., 97" required>
         </div>
         <div class="form-group">
-            <label>Avg Wind Speed</label>
-            <input type="text" name="avg_wind_speed" required>
+            <label>Avg Wind Speed (mph)</label>
+            <input type="text" name="avg_wind_speed" placeholder="e.g., 1.2" required>
         </div>
         <div class="form-group">
-            <label>Max Wind Direction</label>
-            <input type="text" name="max_wind_direction" required>
+            <label>Max Wind Direction (°)</label>
+            <input type="text" name="max_wind_direction" placeholder="e.g., 106" required>
         </div>
         <div class="form-group">
-            <label>Max Wind Speed</label>
-            <input type="text" name="max_wind_speed" required>
+            <label>Max Wind Speed (mph)</label>
+            <input type="text" name="max_wind_speed" placeholder="e.g., 1.6" required>
         </div>
         <div class="form-group">
-            <label>Min Wind Direction</label>
-            <input type="text" name="min_wind_direction" required>
+            <label>Min Wind Direction (°)</label>
+            <input type="text" name="min_wind_direction" placeholder="e.g., 85" required>
         </div>
         <div class="form-group">
-            <label>Min Wind Speed</label>
-            <input type="text" name="min_wind_speed" required>
+            <label>Min Wind Speed (mph)</label>
+            <input type="text" name="min_wind_speed" placeholder="e.g., 1.0" required>
         </div>
         <div class="form-group">
-            <label>Relative Humidity</label>
-            <input type="text" name="relative_humidity" required>
+            <label>Relative Humidity (%)</label>
+            <input type="text" name="relative_humidity" placeholder="e.g., 60.5" required>
         </div>
         <div class="form-group">
-            <label>Hour</label>
-            <input type="text" name="hour" required>
+            <label>Hour (0-23)</label>
+            <input type="text" name="hour" placeholder="e.g., 0" required>
         </div>
         <div class="form-group">
-            <label>Day</label>
-            <input type="text" name="day" required>
+            <label>Day (1-31)</label>
+            <input type="text" name="day" placeholder="e.g., 10" required>
         </div>
         <div class="form-group">
-            <label>Month</label>
-            <input type="text" name="month" required>
+            <label>Month (1-12)</label>
+            <input type="text" name="month" placeholder="e.g., 9" required>
+        </div>
+        <div class="form-group">
+            <label>Previous Air Temp (°F)</label>
+            <input type="text" name="Prev_Air_Temp" placeholder="e.g., 64.76" required>
+        </div>
+        <div class="form-group">
+            <label>3-Min Avg Temp (°F)</label>
+            <input type="text" name="Temp_3min_avg" placeholder="e.g., 64.5" required>
         </div>
         <div class="form-group" style="flex: 1 1 100%;">
             <button type="submit">🔍 Predict</button>
