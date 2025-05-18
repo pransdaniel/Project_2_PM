@@ -1,47 +1,19 @@
 from flask import Flask, request, render_template
 import pandas as pd
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
+import joblib
+import numpy as np
 
 app = Flask(__name__)
 
-# Load dataset
-data = pd.read_csv("dataset_cuaca3 (1).csv")
+# Load pre-trained models from the root directory
+clf = joblib.load('D:/Folder_Kuliah/Semester 6/MachineLearning/Proyek/Project_2_PM/models/clf_model.pkl')  # RandomForestClassifier for category
+reg = joblib.load('D:\Folder_Kuliah\Semester 6\MachineLearning\Proyek\Project_2_PM\models\reg_model.pkl')  # LinearRegression for temperature
 
-# Drop baris yang mengandung NaN
-data.dropna(inplace=True)
-
-# Tambah kolom waktu dari timestamp
-data['timestamp'] = pd.to_datetime(data['hpwren_timestamp'])
-data['hour'] = data['timestamp'].dt.hour
-data['day'] = data['timestamp'].dt.day
-data['month'] = data['timestamp'].dt.month
-
-
-
-# Fitur yang digunakan
-features = ['air_pressure', 'avg_wind_direction', 'avg_wind_speed',
-            'max_wind_direction', 'max_wind_speed',
-            'min_wind_direction', 'min_wind_speed',
-            'relative_humidity', 'hour', 'day', 'month']
-
-X = data[features]
-y = data['air_temp']
-
-# Latih model
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-model = LinearRegression()
-model.fit(X_train, y_train)
-
-def get_temp_category(temp):
-    if temp < 0:
-        return "Dingin"
-    elif 0 <= temp < 15:
-        return "Sejuk"
-    elif 15 <= temp < 27:
-        return "Hangat"
-    else:
-        return "Panas"
+# Define features in the same order as during training
+features = ['air_pressure', 'avg_wind_direction', 'avg_wind_speed', 
+            'max_wind_direction', 'max_wind_speed', 'min_wind_direction', 
+            'min_wind_speed', 'relative_humidity', 'hour', 'day', 'month', 
+            'Prev_Air_Temp', 'Temp_3min_avg']
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -49,26 +21,46 @@ def home():
     category = None
     if request.method == "POST":
         try:
-            input_data = [
-                float(request.form['air_pressure']),
-                float(request.form['avg_wind_direction']),
-                float(request.form['avg_wind_speed']),
-                float(request.form['max_wind_direction']),
-                float(request.form['max_wind_speed']),
-                float(request.form['min_wind_direction']),
-                float(request.form['min_wind_speed']),
-                float(request.form['relative_humidity']),
-                int(request.form['hour']),
-                int(request.form['day']),
-                int(request.form['month'])
-            ]
+            # Collect and validate inputs
+            input_data = {
+                'air_pressure': float(request.form['air_pressure']),
+                'avg_wind_direction': float(request.form['avg_wind_direction']),
+                'avg_wind_speed': float(request.form['avg_wind_speed']),
+                'max_wind_direction': float(request.form['max_wind_direction']),
+                'max_wind_speed': float(request.form['max_wind_speed']),
+                'min_wind_direction': float(request.form['min_wind_direction']),
+                'min_wind_speed': float(request.form['min_wind_speed']),
+                'relative_humidity': float(request.form['relative_humidity']),
+                'hour': int(request.form['hour']),
+                'day': int(request.form['day']),
+                'month': int(request.form['month']),
+                'Prev_Air_Temp': float(request.form['Prev_Air_Temp']),
+                'Temp_3min_avg': float(request.form['Temp_3min_avg'])
+            }
 
-            temp_pred = round(model.predict([input_data])[0], 2)
+            # Basic input validation
+            if not (0 <= input_data['hour'] <= 23):
+                raise ValueError("Hour must be between 0 and 23")
+            if not (1 <= input_data['month'] <= 12):
+                raise ValueError("Month must be between 1 and 12")
+            if not (1 <= input_data['day'] <= 31):
+                raise ValueError("Day must be between 1 and 31")
+
+            # Create DataFrame for prediction (mimics Jupyter preprocessing)
+            input_df = pd.DataFrame([input_data], columns=features)
+
+            # Ensure no missing values (forward fill logic from Jupyter)
+            input_df = input_df.fillna(method='ffill')
+
+            # Predict temperature (regression) and category (classification)
+            temp_pred = round(reg.predict(input_df)[0], 2)
+            category_pred = clf.predict(input_df)[0]
+
             prediction = temp_pred
-            category = get_temp_category(temp_pred)
-
+            category = category_pred
         except Exception as e:
             prediction = f"Error: {str(e)}"
+            category = None
 
     return render_template("index.html", prediction=prediction, category=category)
 
