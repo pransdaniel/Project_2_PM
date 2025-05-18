@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather Prediction App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 600px;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .form-group {
+            flex: 1 1 45%;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 25px;
+            text-align: center;
+            padding: 20px;
+            background-color: #e0f7fa;
+            border-radius: 10px;
+            color: #00796b;
+            font-size: 18px;
+        }
+
+        .weather-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🌤️ Weather Prediction App</h1>
+    <form method="POST" action="/">
+        <div class="form-group">
+            <label>Air Pressure</label>
+            <input type="text" name="air_pressure" required>
+        </div>
+        <div class="form-group">
+            <label>Avg Wind Direction</label>
+            <input type="text" name="avg_wind_direction" required>
+        </div>
+        <div class="form-group">
+            <label>Avg Wind Speed</label>
+            <input type="text" name="avg_wind_speed" required>
+        </div>
+        <div class="form-group">
+            <label>Max Wind Direction</label>
+            <input type="text" name="max_wind_direction" required>
+        </div>
+        <div class="form-group">
+            <label>Max Wind Speed</label>
+            <input type="text" name="max_wind_speed" required>
+        </div>
+        <div class="form-group">
+            <label>Min Wind Direction</label>
+            <input type="text" name="min_wind_direction" required>
+        </div>
+        <div class="form-group">
+            <label>Min Wind Speed</label>
+            <input type="text" name="min_wind_speed" required>
+        </div>
+        <div class="form-group">
+            <label>Relative Humidity</label>
+            <input type="text" name="relative_humidity" required>
+        </div>
+        <div class="form-group">
+            <label>Hour</label>
+            <input type="text" name="hour" required>
+        </div>
+        <div class="form-group">
+            <label>Day</label>
+            <input type="text" name="day" required>
+        </div>
+        <div class="form-group">
+            <label>Month</label>
+            <input type="text" name="month" required>
+        </div>
+        <div class="form-group" style="flex: 1 1 100%;">
+            <button type="submit">🔍 Predict</button>
+        </div>
+    </form>
+
+    {% if prediction is not none %}
+        <div class="result">
+            <div class="weather-icon">🌡️</div>
+            <div><strong>Temperature Category:</strong> {{ category }}</div>
+            <div><strong>Air Temperature:</strong> {{ prediction }} °F</div>
+        </div>
+    {% endif %}
+</div>
+</body>
+</html>
